@@ -84,7 +84,7 @@ async function searchData() {
     resultDiv.innerHTML = "<p class='loading'>Searching...</p>";
 
     try {
-        let response = await fetch("https://sheet-bot-sfuv.onrender.com", {
+        let response = await fetch("https://sheet-bot-sfuv.onrender.com/search", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
