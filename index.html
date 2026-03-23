@@ -23,8 +23,6 @@
             width: 90%;
             padding: 10px;
             margin: 10px 0;
-            border-radius: 5px;
-            border: 1px solid #ccc;
         }
 
         button {
@@ -36,26 +34,14 @@
             cursor: pointer;
         }
 
-        button:hover {
-            background-color: #0056b3;
-        }
-
         #result {
             margin-top: 20px;
             text-align: left;
         }
 
-        .loading {
-            color: orange;
-        }
-
-        .error {
-            color: red;
-        }
-
-        .success {
-            color: green;
-        }
+        .error { color: red; }
+        .success { color: green; }
+        .loading { color: orange; }
     </style>
 </head>
 
@@ -84,7 +70,7 @@ async function searchData() {
     resultDiv.innerHTML = "<p class='loading'>Searching...</p>";
 
     try {
-        let response = await fetch("https://sheet-fider-bot.onrender.com", {
+        let response = await fetch("https://sheet-fider-bot.onrender.com/search", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -96,22 +82,26 @@ async function searchData() {
 
         if (data.status === "Not Found") {
             resultDiv.innerHTML = "<p class='error'>No order found</p>";
-        } else {
+        } 
+        else if (data.status === "Error") {
+            resultDiv.innerHTML = `<p class='error'>${data.message}</p>`;
+        }
+        else {
             resultDiv.innerHTML = `
                 <p class='success'><b>Status:</b> ${data.status}</p>
                 <p><b>Courier:</b> ${data.courier}</p>
                 <p><b>AWB:</b> ${data.awb}</p>
                 <p><b>Tracking:</b> 
-                    <a href="${data.tracking_link}" target="_blank">
-                        Click to Track
-                    </a>
+                    ${data.tracking_link ? 
+                        `<a href="${data.tracking_link}" target="_blank">Click to Track</a>` 
+                        : "Not available"}
                 </p>
             `;
         }
 
     } catch (error) {
-        resultDiv.innerHTML = "<p class='error'>Server error. Try again later.</p>";
         console.log(error);
+        resultDiv.innerHTML = "<p class='error'>Server error. Try again later.</p>";
     }
 }
 </script>
