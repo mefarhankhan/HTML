@@ -49,17 +49,12 @@
         .error { color: red; }
         .success { color: green; }
 
-        /* 🔥 Order Card */
         .order-card {
             border: 1px solid #ddd;
             border-radius: 8px;
             padding: 12px;
             margin-bottom: 12px;
             background: #fafafa;
-        }
-
-        .order-card b {
-            color: #333;
         }
 
         .track-btn {
@@ -120,11 +115,10 @@ async function searchData() {
         }
 
         if (!data.orders || data.orders.length === 0) {
-            resultDiv.innerHTML = "<p class='error'>No valid orders found</p>";
+            resultDiv.innerHTML = "<p class='error'>No orders found</p>";
             return;
         }
 
-        // ✅ Render multiple orders
         let html = `<p class='success'><b>${data.count} Order(s) Found</b></p>`;
 
         data.orders.forEach(order => {
@@ -133,11 +127,14 @@ async function searchData() {
                     <p><b>Product:</b> ${order.product}</p>
                     <p><b>Status:</b> ${order.status}</p>
                     <p><b>Courier:</b> ${order.courier}</p>
-                    <p><b>AWB:</b> ${order.awb}</p>
+                    <p><b>AWB:</b> ${order.awb ? order.awb : "Not Assigned"}</p>
                     <p><b>Order Date:</b> ${order.created_at}</p>
-                    <a class="track-btn" href="${order.tracking_link}" target="_blank">
-                        Track Order
-                    </a>
+
+                    ${
+                        order.tracking_link 
+                        ? `<a class="track-btn" href="${order.tracking_link}" target="_blank">Track Order</a>` 
+                        : `<span style="color:gray;">Tracking not available</span>`
+                    }
                 </div>
             `;
         });
