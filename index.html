@@ -7,13 +7,13 @@
             font-family: Arial;
             background-color: #f5f5f5;
             text-align: center;
-            margin-top: 100px;
+            margin-top: 80px;
         }
 
         .container {
             background: white;
             padding: 30px;
-            width: 350px;
+            width: 400px;
             margin: auto;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
@@ -45,16 +45,36 @@
             text-align: left;
         }
 
-        .loading {
-            color: orange;
+        .loading { color: orange; }
+        .error { color: red; }
+        .success { color: green; }
+
+        /* 🔥 Order Card */
+        .order-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 12px;
+            background: #fafafa;
         }
 
-        .error {
-            color: red;
+        .order-card b {
+            color: #333;
         }
 
-        .success {
-            color: green;
+        .track-btn {
+            display: inline-block;
+            margin-top: 8px;
+            padding: 6px 10px;
+            background: #28a745;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 13px;
+        }
+
+        .track-btn:hover {
+            background: #218838;
         }
     </style>
 </head>
@@ -96,18 +116,33 @@ async function searchData() {
 
         if (data.status === "Not Found") {
             resultDiv.innerHTML = "<p class='error'>No order found</p>";
-        } else {
-            resultDiv.innerHTML = `
-                <p class='success'><b>Status:</b> ${data.status}</p>
-                <p><b>Courier:</b> ${data.courier}</p>
-                <p><b>AWB:</b> ${data.awb}</p>
-                <p><b>Tracking:</b> 
-                    <a href="${data.tracking_link}" target="_blank">
-                        Click to Track
-                    </a>
-                </p>
-            `;
+            return;
         }
+
+        if (!data.orders || data.orders.length === 0) {
+            resultDiv.innerHTML = "<p class='error'>No valid orders found</p>";
+            return;
+        }
+
+        // ✅ Render multiple orders
+        let html = `<p class='success'><b>${data.count} Order(s) Found</b></p>`;
+
+        data.orders.forEach(order => {
+            html += `
+                <div class="order-card">
+                    <p><b>Product:</b> ${order.product}</p>
+                    <p><b>Status:</b> ${order.status}</p>
+                    <p><b>Courier:</b> ${order.courier}</p>
+                    <p><b>AWB:</b> ${order.awb}</p>
+                    <p><b>Order Date:</b> ${order.created_at}</p>
+                    <a class="track-btn" href="${order.tracking_link}" target="_blank">
+                        Track Order
+                    </a>
+                </div>
+            `;
+        });
+
+        resultDiv.innerHTML = html;
 
     } catch (error) {
         resultDiv.innerHTML = "<p class='error'>Server error. Try again later.</p>";
