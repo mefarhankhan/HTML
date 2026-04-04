@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>Order Tracking</title>
+
     <style>
         body {
             font-family: Arial;
@@ -49,19 +50,20 @@
         .error { color: red; }
         .success { color: green; }
 
-       .order-card {
-    border: 1px solid #eee;
-    border-radius: 10px;
-    padding: 15px;
-    margin-bottom: 15px;
-    background: #ffffff;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    transition: 0.2s;
-}
+        .order-card {
+            border: 1px solid #eee;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            background: #ffffff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            transition: 0.2s;
+        }
 
-.order-card:hover {
-    transform: translateY(-2px);
-}
+        .order-card:hover {
+            transform: translateY(-2px);
+        }
+
         .track-btn {
             display: inline-block;
             margin-top: 8px;
@@ -92,13 +94,12 @@
 </div>
 
 <script>
-    <script>
 function formatEDD(dateString) {
     if (!dateString || dateString === "Not Available") return "Not Available";
 
     let date = new Date(dateString);
 
-    if (isNaN(date)) return dateString; // fallback if invalid
+    if (isNaN(date)) return dateString;
 
     return date.toLocaleString("en-IN", {
         day: "2-digit",
@@ -109,7 +110,7 @@ function formatEDD(dateString) {
         hour12: true
     });
 }
-</script>
+
 async function searchData() {
     let input = document.getElementById("inputData").value.trim();
     let resultDiv = document.getElementById("result");
@@ -132,6 +133,8 @@ async function searchData() {
 
         let data = await response.json();
 
+        console.log("API RESPONSE:", data);
+
         if (data.status === "Not Found") {
             resultDiv.innerHTML = "<p class='error'>No order found</p>";
             return;
@@ -145,12 +148,20 @@ async function searchData() {
         let html = `<p class='success'><b>${data.count} Order(s) Found</b></p>`;
 
         data.orders.forEach(order => {
+
+            console.log("ORDER:", order);
+
+            let statusColor = "#333";
+            if (order.status.toLowerCase().includes("delivered")) statusColor = "green";
+            else if (order.status.toLowerCase().includes("shipped")) statusColor = "orange";
+            else if (order.status.toLowerCase().includes("cancel")) statusColor = "red";
+
             html += `
                 <div class="order-card">
                     <p><b>Product:</b> ${order.product}</p>
-                    <p><b>Status:</b> ${order.status}</p>
+                    <p><b>Status:</b> <span style="color:${statusColor}">${order.status}</span></p>
                     <p><b>Courier:</b> ${order.courier}</p>
-                    <p><b>EDD:</b> ${formatEDD(order.edd)}</p>
+                    <p><b>EDD:</b> ${order.edd ? formatEDD(order.edd) : "Not Available"}</p>
                     <p><b>AWB:</b> ${order.awb ? order.awb : "Not Assigned"}</p>
                     <p><b>Order Date:</b> ${order.created_at}</p>
 
