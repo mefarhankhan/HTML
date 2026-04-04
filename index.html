@@ -49,14 +49,19 @@
         .error { color: red; }
         .success { color: green; }
 
-        .order-card {
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 12px;
-            margin-bottom: 12px;
-            background: #fafafa;
-        }
+       .order-card {
+    border: 1px solid #eee;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 15px;
+    background: #ffffff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    transition: 0.2s;
+}
 
+.order-card:hover {
+    transform: translateY(-2px);
+}
         .track-btn {
             display: inline-block;
             margin-top: 8px;
@@ -87,6 +92,24 @@
 </div>
 
 <script>
+    <script>
+function formatEDD(dateString) {
+    if (!dateString || dateString === "Not Available") return "Not Available";
+
+    let date = new Date(dateString);
+
+    if (isNaN(date)) return dateString; // fallback if invalid
+
+    return date.toLocaleString("en-IN", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true
+    });
+}
+</script>
 async function searchData() {
     let input = document.getElementById("inputData").value.trim();
     let resultDiv = document.getElementById("result");
@@ -127,7 +150,7 @@ async function searchData() {
                     <p><b>Product:</b> ${order.product}</p>
                     <p><b>Status:</b> ${order.status}</p>
                     <p><b>Courier:</b> ${order.courier}</p>
-                    <p><b>EDD:</b> ${order.edd || "Not Available"}</p>
+                    <p><b>EDD:</b> ${formatEDD(order.edd)}</p>
                     <p><b>AWB:</b> ${order.awb ? order.awb : "Not Assigned"}</p>
                     <p><b>Order Date:</b> ${order.created_at}</p>
 
